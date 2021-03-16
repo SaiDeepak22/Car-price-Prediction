@@ -1,0 +1,77 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sn
+
+cardata= pd.read_csv('CAR DETAILS FROM CAR DEKHO.csv')
+
+cardata
+
+print (cardata.shape)
+
+print (cardata.columns)
+
+cardata.head()
+
+cardata.nunique(axis=0)
+
+cardata.describe()
+
+cardata['age'] = 2021 - cardata['year']
+cardata.drop('year',axis=1,inplace = True)
+
+cardata
+
+cardata.duplicated().sum()
+cardata.shape
+
+cardata.drop_duplicates(subset=None, inplace=True)
+cardata.shape
+
+from sklearn.preprocessing import LabelEncoder
+le=LabelEncoder()
+
+cardata.head()
+cardata['tfuel']=le.fit_transform(cardata['fuel'])
+cardata['tseller_type']=le.fit_transform(cardata['seller_type'])
+cardata['towner']=le.fit_transform(cardata['owner'])
+cardata['ttransmission']=le.fit_transform(cardata['transmission'])
+
+cardata.head()
+
+cardata[['ttransmission','transmission']].sample(9)
+
+sn.pairplot(cardata)
+
+cardata.corr()
+
+sn.regplot(x=cardata['km_driven'],y=cardata['selling_price'])
+
+x=pd.DataFrame(cardata,columns=['km_driven','tfuel','tseller_type','ttransmission','towner','age'])
+y=pd.DataFrame(cardata,columns=['selling_price'])
+
+x.head()
+
+y.head()
+
+from sklearn.model_selection import train_test_split
+
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.3,random_state=2)
+
+from sklearn.linear_model import LinearRegression
+reg=LinearRegression()
+
+reg.fit(x_train,y_train)
+
+print("intercept :",reg.intercept_)
+print("slope :",reg.coef_)
+
+y_pred=reg.predict(x_test)
+
+from sklearn.metrics import r2_score, mean_squared_error
+
+score=r2_score(y_test,y_pred)
+print(score)
+
+y_pred=reg.predict([[80000,1,1,0,2,6]])
+y_pred
